@@ -69,7 +69,7 @@ export default function App() {
 
                 <div className="space-y-3">
                   <button 
-                    onClick={() => window.location.href = 'https://pay.lowify.com.br/go.php?offer=oth8l43'}
+                    onClick={() => window.location.href = 'https://pay.lowify.com.br/checkout?product_id=TuT5ZF'}
                     className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-sm transition-all active:scale-95 shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2"
                   >
                     CONCLUIR MINHA COMPRA <CheckCircle className="w-4 h-4" />

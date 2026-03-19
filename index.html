@@ -18,26 +18,50 @@
       // Comum quando scripts de tracking (UTMify) interagem com React e Iframes (Wistia)
       (function() {
         const originalStringify = JSON.stringify;
+        const originalParse = JSON.parse;
+
         JSON.stringify = function(value, replacer, space) {
-          const cache = new Set();
-          return originalStringify(value, (key, val) => {
-            try {
-              // Verifica se o valor é um objeto e não é nulo
-              if (typeof val === 'object' && val !== null) {
-                // Previne referências circulares
-                if (cache.has(val)) return;
-                cache.add(val);
-                
-                // Tenta acessar uma propriedade simples para verificar se é cross-origin
-                // Se for cross-origin, o acesso lançará um erro que será capturado pelo catch
-                Object.keys(val);
-              }
-              return replacer ? replacer(key, val) : val;
-            } catch (e) {
-              // Se houver erro de acesso (como cross-origin), retornamos undefined para ignorar o objeto
-              return undefined;
+          // Tenta verificar se o objeto raiz é acessível (evita erro de cross-origin Window)
+          try {
+            if (typeof value === 'object' && value !== null) {
+              // Tenta acessar uma propriedade para ver se é cross-origin
+              Object.keys(value);
             }
-          }, space);
+          } catch (e) {
+            return "null"; // Retorna string "null" em vez de undefined para evitar erros no parse futuro
+          }
+
+          const cache = new Set();
+          try {
+            const result = originalStringify(value, (key, val) => {
+              try {
+                if (typeof val === 'object' && val !== null) {
+                  if (cache.has(val)) return;
+                  cache.add(val);
+                  Object.keys(val);
+                }
+                return replacer ? replacer(key, val) : val;
+              } catch (e) {
+                return undefined;
+              }
+            }, space);
+            return result === undefined ? "null" : result;
+          } catch (e) {
+            return "null";
+          }
+        };
+
+        JSON.parse = function(text, reviver) {
+          if (text === "undefined") return undefined;
+          try {
+            return originalParse(text, reviver);
+          } catch (e) {
+            // Se falhar, tenta limpar a string se for algo comum de erro de tracking
+            if (typeof text === 'string' && text.includes('undefined')) {
+              return null;
+            }
+            throw e;
+          }
         };
       })();
 
