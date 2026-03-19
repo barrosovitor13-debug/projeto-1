@@ -14,6 +14,33 @@
       defer
     ></script>
     <script>
+      // Patch robusto para evitar erros de estrutura circular e acesso cross-origin no JSON.stringify
+      // Comum quando scripts de tracking (UTMify) interagem com React e Iframes (Wistia)
+      (function() {
+        const originalStringify = JSON.stringify;
+        JSON.stringify = function(value, replacer, space) {
+          const cache = new Set();
+          return originalStringify(value, (key, val) => {
+            try {
+              // Verifica se o valor é um objeto e não é nulo
+              if (typeof val === 'object' && val !== null) {
+                // Previne referências circulares
+                if (cache.has(val)) return;
+                cache.add(val);
+                
+                // Tenta acessar uma propriedade simples para verificar se é cross-origin
+                // Se for cross-origin, o acesso lançará um erro que será capturado pelo catch
+                Object.keys(val);
+              }
+              return replacer ? replacer(key, val) : val;
+            } catch (e) {
+              // Se houver erro de acesso (como cross-origin), retornamos undefined para ignorar o objeto
+              return undefined;
+            }
+          }, space);
+        };
+      })();
+
       window.pixelId = "69bb993ae3a69017a6dd06f1";
       var a = document.createElement("script");
       a.setAttribute("async", "");

@@ -3,11 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CheckCircle, PlayCircle, Star, Heart, Clock, ShieldCheck, ArrowRight, Zap, X } from "lucide-react";
+import { CheckCircle, PlayCircle, Star, Heart, Clock, ShieldCheck, ArrowRight, Zap, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const COVER_IMAGE = "https://i.ibb.co/DfzsnZ88/Captura-de-tela-2026-03-18-040428.png";
+
+const SOCIAL_PROOFS = [
+  "https://i.ibb.co/kgXMFRDn/testimonial-1.jpg",
+  "https://i.ibb.co/R44kktNv/testimonial-2.jpg",
+  "https://i.ibb.co/k60xXM6k/testimonial-3.jpg",
+  "https://i.ibb.co/R4chLr5B/testimonial-4.jpg",
+  "https://i.ibb.co/YB9xgczq/testimonial-5.jpg",
+];
 
 export default function App() {
   const [showPopup, setShowPopup] = useState(false);
@@ -192,18 +200,24 @@ export default function App() {
           </div>
         </motion.section>
 
-        {/* Testimonials */}
-        <section className="space-y-4">
-          <h3 className="text-center text-rose-500 font-bold text-xs uppercase tracking-[0.3em] mb-6">O que estão dizendo</h3>
-          <div className="space-y-4">
-            <TestimonialCard 
-              name="Mariana L."
-              text="Gente, a qualidade é perfeita! O link chegou na hora. Vale muito a pena por esse preço."
-            />
-            <TestimonialCard 
-              name="Felipe K."
-              text="Minha namorada amou! Assistimos tudo no final de semana sem nenhum travamento."
-            />
+        {/* Testimonials Carousel */}
+        <section className="space-y-6">
+          <div className="text-center">
+            <h3 className="text-rose-500 font-bold text-xs uppercase tracking-[0.3em] mb-2">Provas Sociais</h3>
+            <p className="text-white/60 text-[10px] uppercase tracking-widest">Veja o que nossos alunos estão dizendo</p>
+          </div>
+          
+          <SocialProofCarousel />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 bg-[#151515] rounded-2xl border border-white/5 text-center">
+              <div className="text-emerald-400 font-black text-xl mb-1">98%</div>
+              <div className="text-[8px] text-white/40 uppercase tracking-widest font-bold">Satisfação</div>
+            </div>
+            <div className="p-4 bg-[#151515] rounded-2xl border border-white/5 text-center">
+              <div className="text-rose-500 font-black text-xl mb-1">+15k</div>
+              <div className="text-[8px] text-white/40 uppercase tracking-widest font-bold">Alunos VIP</div>
+            </div>
           </div>
         </section>
 
@@ -229,6 +243,53 @@ export default function App() {
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function SocialProofCarousel() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % SOCIAL_PROOFS.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="relative w-full max-w-[320px] mx-auto overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-2xl">
+      <div 
+        className="flex transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
+        style={{ transform: `translateX(-${index * 100}%)` }}
+      >
+        {SOCIAL_PROOFS.map((src, i) => (
+          <div key={i} className="min-w-full flex items-center justify-center p-1">
+            <img 
+              src={src} 
+              alt={`Depoimento ${i + 1}`} 
+              className="w-full h-auto rounded-2xl"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+      
+      {/* Navigation Dots */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+        {SOCIAL_PROOFS.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              index === i ? 'bg-rose-500 w-6' : 'bg-white/20 w-1.5'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Glass Overlay for depth */}
+      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-[2rem]"></div>
     </div>
   );
 }
