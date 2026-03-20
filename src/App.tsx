@@ -68,18 +68,26 @@ export default function App() {
                 </div>
 
                 <div className="space-y-3">
-                  <button 
-                    onClick={() => window.location.href = 'https://pay.lowify.com.br/checkout?product_id=TuT5ZF'}
-                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-sm transition-all active:scale-95 shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2"
+                  <a 
+                    href="https://pay.lowify.com.br/checkout?product_id=TuT5ZF"
+                    onClick={(e) => {
+                      // @ts-ignore
+                      if (window.utmify) window.utmify.track('InitiateCheckout');
+                    }}
+                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-sm transition-all active:scale-95 shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2 no-underline"
                   >
                     CONCLUIR MINHA COMPRA <CheckCircle className="w-4 h-4" />
-                  </button>
-                  <button 
-                    onClick={() => window.location.href = 'https://pay.lowify.com.br/checkout?product_id=s0Tp3X'}
-                    className="w-full py-2 bg-white/5 hover:bg-white/10 text-white/30 rounded-xl font-bold text-[9px] transition-all active:scale-95 uppercase tracking-widest"
+                  </a>
+                  <a 
+                    href="https://pay.lowify.com.br/checkout?product_id=s0Tp3X"
+                    onClick={(e) => {
+                      // @ts-ignore
+                      if (window.utmify) window.utmify.track('InitiateCheckout');
+                    }}
+                    className="w-full py-2 bg-white/5 hover:bg-white/10 text-white/30 rounded-xl font-bold text-[9px] transition-all active:scale-95 uppercase tracking-widest flex items-center justify-center no-underline"
                   >
                     NÃO, QUERO APENAS O DORAMA
-                  </button>
+                  </a>
                 </div>
               </div>
             </motion.div>
