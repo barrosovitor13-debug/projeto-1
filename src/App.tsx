@@ -152,9 +152,9 @@ export default function App() {
           className="text-center"
         >
           <h2 className="text-rose-500 font-black text-[14px] uppercase tracking-[0.4em] mb-6">Assista uma Prévia</h2>
-          <div className="max-w-[280px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+          <div className="max-w-[280px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
             {/* @ts-ignore */}
-            <wistia-player media-id="q7yt2tqh12" aspect="0.5633802816901409"></wistia-player>
+            <lt-v2 v="cbd97907-dd12-45d0-aa7e-c11ef36134cc" ar="9:16" p="pc=db2a0a"></lt-v2>
           </div>
         </motion.section>
 
