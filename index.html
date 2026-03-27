@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Só Mais Uma Vez - Dorama Premium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.utmify.com.br">
+    <link rel="preconnect" href="https://app.litevideo.net">
+    <link rel="preconnect" href="https://i.ibb.co">
+    <link rel="preload" as="image" href="https://i.ibb.co/DfzsnZ88/Captura-de-tela-2026-03-18-040428.png" fetchpriority="high">
     <script src="https://app.litevideo.net/p.js" async></script>
     <script
       src="https://cdn.utmify.com.br/scripts/utms/latest.js"
@@ -13,64 +19,38 @@
       defer
     ></script>
     <script>
-      // Patch robusto para evitar erros de estrutura circular e acesso cross-origin no JSON.stringify
-      // Comum quando scripts de tracking (UTMify) interagem com React e Iframes (Wistia)
+      // Patch otimizado para evitar erros de estrutura circular e acesso cross-origin no JSON.stringify
       (function() {
         const originalStringify = JSON.stringify;
         const originalParse = JSON.parse;
 
         JSON.stringify = function(value, replacer, space) {
-          // Tenta verificar se o objeto raiz é acessível (evita erro de cross-origin Window)
-          try {
-            if (typeof value === 'object' && value !== null) {
-              // Tenta acessar uma propriedade para ver se é cross-origin
-              Object.keys(value);
-            }
-          } catch (e) {
-            return "null"; // Retorna string "null" em vez de undefined para evitar erros no parse futuro
-          }
-
           const cache = new Set();
           try {
-            const result = originalStringify(value, (key, val) => {
-              try {
-                if (typeof val === 'object' && val !== null) {
-                  if (cache.has(val)) return;
-                  cache.add(val);
-                  Object.keys(val);
-                }
-                return replacer ? replacer(key, val) : val;
-              } catch (e) {
-                return undefined;
+            return originalStringify(value, (key, val) => {
+              if (typeof val === 'object' && val !== null) {
+                if (cache.has(val)) return;
+                cache.add(val);
               }
-            }, space);
-            return result === undefined ? "null" : result;
+              return replacer ? replacer(key, val) : val;
+            }, space) || "null";
           } catch (e) {
             return "null";
           }
         };
 
         JSON.parse = function(text, reviver) {
-          if (text === "undefined") return undefined;
+          if (text === "undefined" || !text) return null;
           try {
             return originalParse(text, reviver);
           } catch (e) {
-            // Se falhar, tenta limpar a string se for algo comum de erro de tracking
-            if (typeof text === 'string' && text.includes('undefined')) {
-              return null;
-            }
-            throw e;
+            return null;
           }
         };
       })();
-
       window.pixelId = "69bb993ae3a69017a6dd06f1";
-      var a = document.createElement("script");
-      a.setAttribute("async", "");
-      a.setAttribute("defer", "");
-      a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
-      document.head.appendChild(a);
     </script>
+    <script src="https://cdn.utmify.com.br/scripts/pixel/pixel.js" async defer></script>
   </head>
   <body>
     <div id="root"></div>

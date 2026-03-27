@@ -73,14 +73,19 @@ export default function App() {
                     onClick={(e) => {
                       e.preventDefault();
                       const url = e.currentTarget.href;
+                      console.log('Tracking InitiateCheckout (Primary)...');
                       // @ts-ignore
-                      if (window.utmify && typeof window.utmify.track === 'function') {
-                        // @ts-ignore
-                        window.utmify.track('InitiateCheckout');
+                      const utmify = window.utmify;
+                      if (utmify && typeof utmify.track === 'function') {
+                        utmify.track('InitiateCheckout');
+                        console.log('UTMify track called');
+                      } else {
+                        console.warn('UTMify not found or track is not a function');
                       }
+                      
                       setTimeout(() => {
                         window.location.href = url;
-                      }, 150);
+                      }, 200);
                     }}
                     className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-sm transition-all active:scale-95 shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2 no-underline"
                   >
@@ -91,14 +96,17 @@ export default function App() {
                     onClick={(e) => {
                       e.preventDefault();
                       const url = e.currentTarget.href;
+                      console.log('Tracking InitiateCheckout (Secondary)...');
                       // @ts-ignore
-                      if (window.utmify && typeof window.utmify.track === 'function') {
-                        // @ts-ignore
-                        window.utmify.track('InitiateCheckout');
+                      const utmify = window.utmify;
+                      if (utmify && typeof utmify.track === 'function') {
+                        utmify.track('InitiateCheckout');
+                        console.log('UTMify track called');
                       }
+                      
                       setTimeout(() => {
                         window.location.href = url;
-                      }, 150);
+                      }, 200);
                     }}
                     className="w-full py-2 bg-white/5 hover:bg-white/10 text-white/30 rounded-xl font-bold text-[9px] transition-all active:scale-95 uppercase tracking-widest flex items-center justify-center no-underline"
                   >
@@ -119,6 +127,10 @@ export default function App() {
             alt="Só Mais Uma Vez Background"
             className="w-full h-full object-cover opacity-40 scale-110 blur-[2px]"
             referrerPolicy="no-referrer"
+            loading="eager"
+            decoding="sync"
+            // @ts-ignore
+            fetchpriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
         </div>
@@ -151,6 +163,10 @@ export default function App() {
                 alt="Só Mais Uma Vez Poster"
                 className="relative w-full h-auto rounded-2xl shadow-2xl border border-white/10"
                 referrerPolicy="no-referrer"
+                loading="eager"
+                decoding="sync"
+                // @ts-ignore
+                fetchpriority="high"
               />
             </div>
           </motion.div>
@@ -170,7 +186,7 @@ export default function App() {
           <h2 className="text-rose-500 font-black text-[14px] uppercase tracking-[0.4em] mb-6">Assista uma Prévia</h2>
           <div className="max-w-[280px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
             {/* @ts-ignore */}
-            <lt-v2 v="cbd97907-dd12-45d0-aa7e-c11ef36134cc" ar="9:16" p="pc=db2a0a"></lt-v2>
+            <lt-v2 v="9ef71a08-8dc7-4a6b-8746-3cb75d395ad3" ar="9:16" p="ph=5&pc=ffd500"></lt-v2>
           </div>
         </motion.section>
 
@@ -205,7 +221,14 @@ export default function App() {
 
           {/* CTA Button */}
           <button 
-            onClick={() => setShowPopup(true)}
+            onClick={() => {
+              // @ts-ignore
+              if (window.utmify && typeof window.utmify.track === 'function') {
+                // @ts-ignore
+                window.utmify.track('InitiateCheckout');
+              }
+              setShowPopup(true);
+            }}
             className="w-full py-5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-black text-lg transition-all active:scale-95 shadow-xl shadow-rose-600/20 flex items-center justify-center gap-3"
           >
             <PlayCircle className="w-6 h-6" />
@@ -260,7 +283,14 @@ export default function App() {
       <div className="fixed bottom-0 left-0 right-0 p-4 z-50 bg-gradient-to-t from-black to-transparent pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
           <button 
-            onClick={() => setShowPopup(true)}
+            onClick={() => {
+              // @ts-ignore
+              if (window.utmify && typeof window.utmify.track === 'function') {
+                // @ts-ignore
+                window.utmify.track('InitiateCheckout');
+              }
+              setShowPopup(true);
+            }}
             className="w-full py-4 bg-rose-600 text-white rounded-xl font-black text-sm shadow-2xl flex items-center justify-center gap-2 animate-bounce-subtle"
           >
             QUERO ASSISTIR COMPLETO - 5,00 <ArrowRight className="w-4 h-4" />
@@ -271,7 +301,18 @@ export default function App() {
   );
 }
 
-function SocialProofCarousel() {
+const FeatureItem = React.memo(({ text }: { text: string }) => {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="w-5 h-5 rounded-full bg-emerald-600/10 flex items-center justify-center flex-shrink-0">
+        <CheckCircle className="w-3 h-3 text-emerald-500" />
+      </div>
+      <span className="text-gray-300 text-sm font-medium">{text}</span>
+    </div>
+  );
+});
+
+const SocialProofCarousel = React.memo(() => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -294,12 +335,12 @@ function SocialProofCarousel() {
               alt={`Depoimento ${i + 1}`} 
               className="w-full h-auto rounded-2xl"
               loading="lazy"
+              decoding="async"
             />
           </div>
         ))}
       </div>
       
-      {/* Navigation Dots */}
       <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
         {SOCIAL_PROOFS.map((_, i) => (
           <button
@@ -312,22 +353,10 @@ function SocialProofCarousel() {
         ))}
       </div>
 
-      {/* Glass Overlay for depth */}
       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-[2rem]"></div>
     </div>
   );
-}
-
-function FeatureItem({ text }: { text: string }) {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="w-5 h-5 rounded-full bg-emerald-600/10 flex items-center justify-center flex-shrink-0">
-        <CheckCircle className="w-3 h-3 text-emerald-500" />
-      </div>
-      <span className="text-gray-300 text-sm font-medium">{text}</span>
-    </div>
-  );
-}
+});
 
 function TestimonialCard({ name, text }: { name: string, text: string }) {
   return (
